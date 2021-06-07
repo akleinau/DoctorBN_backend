@@ -110,6 +110,7 @@ def addNetwork(file, path, name, des):
     newNetwork = NetworkData(filePath=path, displayName=name, description=des)
     db.session.add(newNetwork)
     db.session.commit()
+    db.session.close()
     file.save(path)
     return 'successful'
 
