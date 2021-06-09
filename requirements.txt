@@ -10,3 +10,4 @@ pgmpy==0.1.14
 SQLAlchemy
 gunicorn==20.1.0
 psycopg2-binary
+click

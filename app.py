@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask.cli import with_appcontext
 from werkzeug.utils import secure_filename
 from py_src.Network import Network
 from py_src.Scenario import Scenario
+import click
 import os
 
 ALLOWED_EXTENSIONS = ['.bif']
@@ -16,6 +18,12 @@ app.config.from_pyfile('settings.py')
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 CORS(app)
+
+
+@click.command(name='create_tables')
+@with_appcontext
+def create_tables():
+    db.create_all()
 
 
 @app.route('/getNetwork')
