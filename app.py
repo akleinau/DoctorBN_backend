@@ -6,13 +6,13 @@ from py_src.Network import Network
 from py_src.Scenario import Scenario
 import os
 
-NETWORK_FOLDER = '/app/Networks'
 ALLOWED_EXTENSIONS = ['.bif']
 TEMPLATE_FOLDER = os.path.abspath('./src')
 app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
-app.config['NETWORK_FOLDER'] = NETWORK_FOLDER
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_pyfile('settings.py')
+# app.config['NETWORK_FOLDER'] = NETWORK_FOLDER
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 CORS(app)
