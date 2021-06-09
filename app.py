@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask.cli import with_appcontext
 from werkzeug.utils import secure_filename
 from py_src.Network import Network
-#from py_src.Scenario import Scenario
+from py_src.Scenario import Scenario
 import click
 import os
 
