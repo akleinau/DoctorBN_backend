@@ -9,3 +9,4 @@ torchvision==0.9.1+cpu
 pgmpy==0.1.14
 SQLAlchemy==1.4.15
 gunicorn==20.1.0
+psycopg2-binary

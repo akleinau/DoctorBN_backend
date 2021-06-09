@@ -4,3 +4,4 @@ SQLALCHEMY_DATABASE_URI = "postgresql://fbfdkxtwtrohgv:d0c3c8c2b84ced920d47f3340
 SECRET_KEY = os.environ.get('SECRET_KEY')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 NETWORK_FOLDER = './Networks'
+
