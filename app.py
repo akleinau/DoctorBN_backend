@@ -11,7 +11,7 @@ ALLOWED_EXTENSIONS = ['.bif']
 TEMPLATE_FOLDER = os.path.abspath('./src')
 app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
 app.config['NETWORK_FOLDER'] = NETWORK_FOLDER
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
