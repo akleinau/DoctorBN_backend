@@ -142,10 +142,11 @@ def readFile(file):
     :return: str containing its content
     """
     string = file.readlines()
-    print(len(string))
-    string = string[0].decode()
-    print(string)
-    return string
+    string_decoded = ""
+    for index in string:
+        string_decoded += index.decode()
+    print(string_decoded)
+    return string_decoded
 
 
 # Save file upload from application
