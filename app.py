@@ -142,6 +142,7 @@ def readFile(file):
     :return: str containing its content
     """
     string = file.read()
+    print(string)
     return string
 
 
