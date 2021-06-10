@@ -141,8 +141,7 @@ def readFile(file):
     :param file: The .bif file to read
     :return: str containing its content
     """
-    string = file.read()
-    print(string)
+    string = file.readlines()
     return string
 
 
