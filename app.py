@@ -7,6 +7,7 @@ from py_src.Network import Network
 from py_src.Scenario import Scenario
 import click
 import os
+import tempfile
 
 ALLOWED_EXTENSIONS = ['.bif']
 TEMPLATE_FOLDER = os.path.abspath('./src')
@@ -39,7 +40,7 @@ def getNetwork():
 @app.route('/calcTargetForGoals', methods=['POST'])
 def calcTargetForGoals():
     data = request.get_json()
-    network = getNetworkInDatabase(data['network']).filePath
+    network = getNetworkInDatabase(data['network']).fileString
     s = Scenario(network, evidences=data['evidences'], targets=data['target'], goals=data['goals'])
     results = s.compute_target_combs_for_goals()
     likely_results = s.compute_goals()
@@ -56,7 +57,7 @@ def calcOptions():
         relevanceEvidences[ev] = data['evidences'][ev]
     for op in data['options']:
         relevanceEvidences[op] = data['options'][op]
-    network = getNetworkInDatabase(data['network']).filePath
+    network = getNetworkInDatabase(data['network']).fileString
 
     #explanation calculation
     s = Scenario(network, evidences=relevanceEvidences, goals=data['goals'])
@@ -66,7 +67,7 @@ def calcOptions():
                                    filter(lambda n: n['overall_relevance'] >= 0.2 or n['node_name'] in data['options'].keys(),
                                           relevance)))
     explanation = s.compute_explanation_of_goals({}, most_relevant_nodes, nodes)
-
+    network.close()
     return {'relevance': relevance, 'nodes': nodes, 'explanation': explanation}
 
 
@@ -86,12 +87,12 @@ def openNetwork(selectedNet: str):
     :return: opened PGMPy network
     """
     network = getNetworkInDatabase(selectedNet)
-    return Network(network.filePath)
+    return Network(network.fileString)
 
 
 # Database object
 class NetworkData(db.Model):
-    filePath = db.Column(db.String(), nullable=False)
+    fileString = db.Column(db.String(), nullable=False)
     displayName = db.Column(db.String(), primary_key=True, nullable=False)
     description = db.Column(db.String(), nullable=True)
 
@@ -105,24 +106,21 @@ def doesNetworkNameExist(newDisplayName):
         return True
     return False
 
-
+"""
 # Checks if the file already exists in the path
 def doesPathExist(filePath):
     if os.path.exists(filePath):
         return True
     return False
-
-
-# def hasDescription(description):
+"""
 
 
 # Adds a new network's data to the database and saves the file to the designated path
-def addNetwork(file, path, name, des):
-    newNetwork = NetworkData(filePath=path, displayName=name, description=des)
+def addNetwork(file, name, des):
+    newNetwork = NetworkData(fileString=readFile(file), displayName=name, description=des)
     db.session.add(newNetwork)
     db.session.commit()
     db.session.close()
-    file.save(path)
     return 'successful'
 
 
@@ -137,6 +135,18 @@ def getNetworkList():
     return netList
 
 
+def readFile(file):
+    """
+    Function to read a .bif file and return its content as string
+    :param file: The .bif file to read
+    :return: str containing its content
+    """
+    openFile = open(file, 'r')
+    string = openFile.read()
+    openFile.close()
+    return string
+
+
 # Save file upload from application
 @app.route('/uploadNetwork', methods=["POST"])
 def saveNetwork():
@@ -147,13 +157,13 @@ def saveNetwork():
     if doesNetworkNameExist(displayName):
         return jsonify('error1')
     # get file name and path
-    filename = secure_filename(file.filename)
+    """filename = secure_filename(file.filename)
     filePath = os.path.join(app.config['NETWORK_FOLDER'], filename)
     # if the file name of the uploaded network already exists in the networks folder, return with error
     if doesPathExist(filePath):
-        return jsonify('error2')
+        return jsonify('error2')"""
     # add new network to database and save it
-    addNetwork(file, filePath, displayName, description)
+    addNetwork(file, displayName, description)
     return jsonify('successful')
 
 
