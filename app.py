@@ -144,7 +144,7 @@ def readFile(file):
     string = file.readlines()
     string_decoded = ""
     for index in string:
-        string_decoded += index.decode()
+        string_decoded += index.decode() + " "
     print(string_decoded)
     return string_decoded
 
