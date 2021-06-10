@@ -42,7 +42,7 @@ def compute_relevancies_for_outcome_states(distribution_1, distribution_2):
 def get_influence_of_evidences_on_goals(network, evidences, goals):
 
     all_relevance_of_evidence_objects = []  # list with all evidences and their relevances
-    infer = inference.BeliefPropagation(network)
+    infer = inference.VariableElimination(network)
 
     sum_of_all_overall_relevancies = 0  # jennsen-shannon relevances of all targets together
     distribution_all= infer.query(list(goals.keys()), evidence=evidences)

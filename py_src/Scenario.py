@@ -21,7 +21,7 @@ class Scenario:
 
     #computes the values for the targets
     def compute_targets(self):
-        infer = inference.BeliefPropagation(self.network.model)
+        infer = inference.VariableElimination(self.network.model)
 
         for t in self.patient.targets:
             node = self.patient.targets[t]
@@ -29,7 +29,7 @@ class Scenario:
 
     # computes the values for the goals
     def compute_goals(self):
-        infer = inference.BeliefPropagation(self.network.model)
+        infer = inference.VariableElimination(self.network.model)
 
         distribution = infer.query(list(self.patient.goals.keys()), evidence=self.patient.evidences)
         value = distribution.values
@@ -77,7 +77,7 @@ class Scenario:
 
     #compute_target_combs with just one target
     def compute_target_for_goals(self, targets):
-        infer = inference.BeliefPropagation(self.network.model)
+        infer = inference.VariableElimination(self.network.model)
 
         states = []
         n = [1]
@@ -113,7 +113,7 @@ class Scenario:
         return results
 
     def compute_all_nodes(self):
-        infer = inference.BeliefPropagation(self.network.model)
+        infer = inference.VariableElimination(self.network.model)
         nodes = []
         calcNodes = []
         for node in self.network.states:
