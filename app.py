@@ -78,7 +78,9 @@ def getNetworkInDatabase(network: str):
     :return: database entry
     """
     database_net = db.session.get(NetworkData, network)
+    db.session.commit()
     db.session.expire_all()
+    db.session.close()
     return database_net
 
 
