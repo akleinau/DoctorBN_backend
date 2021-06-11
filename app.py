@@ -44,7 +44,9 @@ def getNetwork():
     db.session.commit()
     db.session.expire_all()
     db.session.close()
-    return {'states': network.states, 'edges': network.edges}
+    returnObj = {'states': network.states.copy(), 'edges': network.edges.copy()}
+    del network
+    return returnObj
 
 
 @app.route('/calcTargetForGoals', methods=['POST'])
