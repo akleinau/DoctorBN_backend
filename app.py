@@ -34,7 +34,7 @@ app.cli.add_command(create_tables)
 def getNetwork():
     data = request
     network = openNetwork(data.args.get('network'))
-    return {'states': network.states, 'edges': network.edges}
+    return {'states': network, 'edges': network}
 
 
 @app.route('/calcTargetForGoals', methods=['POST'])
@@ -77,10 +77,9 @@ def getNetworkInDatabase(network: str):
     :param network: network name
     :return: database entry
     """
-    #database_net = db.session.get(NetworkData, network)
-    #db.session.close()
-    #return database_net
-    return {"fileString": "Hello"}
+    database_net = db.session.get(NetworkData, network)
+    db.session.close()
+    return database_net
 
 
 def openNetwork(selectedNet: str):
@@ -89,8 +88,9 @@ def openNetwork(selectedNet: str):
     :param selectedNet: the network name as in the database
     :return: opened PGMPy network
     """
-    network = getNetworkInDatabase(selectedNet)
-    return Network(network.fileString)
+    # = getNetworkInDatabase(selectedNet)
+    #return Network(network.fileString)
+    return "Hello!"
 
 
 # Database object
