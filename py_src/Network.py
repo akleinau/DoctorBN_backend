@@ -9,7 +9,6 @@ class Network:
         self.model = reader.get_model()
         self.states = reader.get_states()
         self.edges = reader.variable_edges
-        reader = "nothing"
         del reader
         gc.collect()
         #name.close()

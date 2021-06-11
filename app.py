@@ -46,7 +46,6 @@ def getNetwork():
     db.session.expire_all()
     db.session.close()
     returnObj = {'states': network.states.copy(), 'edges': network.edges.copy()}
-    network = "nothing"
     del network
     gc.collect()
     return returnObj
