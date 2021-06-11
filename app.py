@@ -77,9 +77,10 @@ def getNetworkInDatabase(network: str):
     :param network: network name
     :return: database entry
     """
-    database_net = db.session.get(NetworkData, network)
-    db.session.close()
-    return database_net
+    #database_net = db.session.get(NetworkData, network)
+    #db.session.close()
+    #return database_net
+    return {"fileString": "Hello"}
 
 
 def openNetwork(selectedNet: str):
