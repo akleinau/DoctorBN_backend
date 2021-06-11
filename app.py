@@ -20,6 +20,13 @@ app.config.from_pyfile('settings.py')
 db = SQLAlchemy(app)
 CORS(app)
 
+# No cacheing at all for API endpoints.
+@app.after_request
+def add_header(response):
+    # response.cache_control.no_store = True
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
 
 @click.command(name='create_tables')
 @with_appcontext
