@@ -34,6 +34,9 @@ app.cli.add_command(create_tables)
 def getNetwork():
     data = request
     network = openNetwork(data.args.get('network'))
+    db.session.commit()
+    db.session.expire_all()
+    db.session.close()
     return {'states': network.states, 'edges': network.edges}
 
 
@@ -78,9 +81,6 @@ def getNetworkInDatabase(network: str):
     :return: database entry
     """
     database_net = db.session.get(NetworkData, network)
-    db.session.commit()
-    #db.session.expire_all()
-    db.session.close()
     return database_net
 
 
