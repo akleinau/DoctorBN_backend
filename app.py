@@ -8,6 +8,7 @@ from py_src.Scenario import Scenario
 import click
 import os
 import tempfile
+import gc
 
 ALLOWED_EXTENSIONS = ['.bif']
 TEMPLATE_FOLDER = os.path.abspath('./src')
@@ -47,6 +48,7 @@ def getNetwork():
     returnObj = {'states': network.states.copy(), 'edges': network.edges.copy()}
     network = "nothing"
     del network
+    gc.collect()
     return returnObj
 
 

@@ -1,4 +1,5 @@
 from pgmpy.readwrite import BIFReader
+import gc
 
 class Network:
 
@@ -10,5 +11,6 @@ class Network:
         self.edges = reader.variable_edges
         reader = "nothing"
         del reader
+        gc.collect()
         #name.close()
 
