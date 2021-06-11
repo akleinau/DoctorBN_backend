@@ -70,7 +70,6 @@ def calcOptions():
                                    filter(lambda n: n['overall_relevance'] >= 0.2 or n['node_name'] in data['options'].keys(),
                                           relevance)))
     explanation = s.compute_explanation_of_goals({}, most_relevant_nodes, nodes)
-    network.close()
     return {'relevance': relevance, 'nodes': nodes, 'explanation': explanation}
 
 
