@@ -44,7 +44,7 @@ def getNetwork():
     db.session.commit()
     db.session.expire_all()
     db.session.close()
-    return {'states': network.states, 'edges': network.edges}
+    return {'states': network, 'edges': network}
 
 
 @app.route('/calcTargetForGoals', methods=['POST'])
@@ -97,7 +97,7 @@ def openNetwork(selectedNet: str):
     :return: opened PGMPy network
     """
     network = getNetworkInDatabase(selectedNet)
-    return Network(network.fileString)
+    return network.fileString
 
 
 # Database object
