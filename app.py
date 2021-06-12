@@ -8,7 +8,6 @@ from py_src.Scenario import Scenario
 import click
 import os
 import tempfile
-import gc
 
 ALLOWED_EXTENSIONS = ['.bif']
 TEMPLATE_FOLDER = os.path.abspath('./src')
@@ -20,14 +19,6 @@ app.config.from_pyfile('settings.py')
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 CORS(app)
-
-# No cacheing at all for API endpoints.
-@app.after_request
-def add_header(response):
-    # response.cache_control.no_store = True
-    if 'Cache-Control' not in response.headers:
-        response.headers['Cache-Control'] = 'no-store'
-    return response
 
 @click.command(name='create_tables')
 @with_appcontext
@@ -129,7 +120,6 @@ def addNetwork(file, name, des):
     newNetwork = NetworkData(fileString=readFile(file), displayName=name, description=des)
     db.session.add(newNetwork)
     db.session.commit()
-    db.session.close()
     return 'successful'
 
 
