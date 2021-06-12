@@ -43,13 +43,7 @@ def getNetwork():
     data = request
     network = getNetworkInDatabase(data.args.get('network')).fileString
     s = Scenario(network)
-    db.session.commit()
-    db.session.expire_all()
-    db.session.close()
-    returnObj = {'states': s.network.states.copy(), 'edges': s.network.edges.copy()}
-    del network
-    gc.collect()
-    return returnObj
+    return {'states': s.network.states, 'edges': s.network.edges}
 
 
 @app.route('/calcTargetForGoals', methods=['POST'])
