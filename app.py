@@ -41,11 +41,12 @@ app.cli.add_command(create_tables)
 @app.route('/getNetwork')
 def getNetwork():
     data = request
-    network = openNetwork(data.args.get('network'))
+    network = getNetworkInDatabase(data.args.get('network')).fileString
+    s = Scenario(network)
     db.session.commit()
     db.session.expire_all()
     db.session.close()
-    returnObj = {'states': network.states.copy(), 'edges': network.edges.copy()}
+    returnObj = {'states': s.network.states.copy(), 'edges': s.network.edges.copy()}
     del network
     gc.collect()
     return returnObj

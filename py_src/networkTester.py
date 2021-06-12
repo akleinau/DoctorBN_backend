@@ -1,3 +1,7 @@
+import time
+from multiprocessing import Process
+from Scenario import Scenario
+
 from Network import Network
 import gc
 
@@ -13,15 +17,25 @@ def readFile(file):
     string_decoded = ""
     for index in string:
         string_decoded += index.replace('\r\n', '\n')
-    print(string_decoded)
     return string_decoded
 
-with open(path, 'r') as file:
+def getReturnObj(path):
+    with open(path, 'r') as file:
+        string = readFile(file)
+        scen = Scenario(string)
+        result = {'states': scen, 'edges': scen}
+        del scen
+        gc.collect()
+        print(result)
 
-    network = Network(readFile(file))
+if __name__ == '__main__':
 
-    returnObj = {'states': network.states.copy(), 'edges': network.edges.copy()}
-    del network
-    gc.collect()
+        call = Process(target=getReturnObj,args=(path,))
+        call.start()
+        call.join()
+        while call.is_alive():
+            print("alive")
+            time.sleep(5)
 
-    print(returnObj)
+
+        print("End")
