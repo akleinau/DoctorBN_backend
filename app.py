@@ -150,6 +150,9 @@ def readFile(file):
 
 # Save file upload from application
 @app.route('/uploadNetwork', methods=["POST"])
+def throwError():
+    return jsonify('Upload is deactivated in this version.')
+
 def saveNetwork():
     displayName = request.form['displayName']
     file = request.files['file']
