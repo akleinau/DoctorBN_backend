@@ -32,9 +32,9 @@ app.cli.add_command(create_tables)
 @app.route('/getNetwork')
 def getNetwork():
     data = request
-    network = getNetworkInDatabase(data.args.get('network')).fileString
-    s = Scenario(network)
-    return {'states': s.network.states, 'edges': s.network.edges}
+    network = getNetworkInDatabase(data.args.get('network'))
+    s = Scenario(network.fileString)
+    return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description}
 
 
 @app.route('/calcTargetForGoals', methods=['POST'])
