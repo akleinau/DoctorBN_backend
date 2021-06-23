@@ -187,7 +187,8 @@ def openNetwork():
 @app.route('/sendFeedback', methods=["POST"])
 def sendFeedback():
     data = request.get_json()
-    body = data['csv']
+    body = data['description'] + "\n \n" + data['csv']
+    body.replace("\n", "<br>")
 
     url = os.environ['TRUSTIFI_URL']+'/api/i/v1/email'
 
