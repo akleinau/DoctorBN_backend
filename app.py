@@ -188,7 +188,8 @@ def openNetwork():
 def sendFeedback():
     data = request.get_json()
     body = data['description'] + "\n \n" + data['csv']
-    body.replace("\n", "<br>")
+    body.replace("\n", " <br> ")
+    print(body)
 
     url = os.environ['TRUSTIFI_URL']+'/api/i/v1/email'
 
