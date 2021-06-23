@@ -187,12 +187,30 @@ def openNetwork():
 @app.route('/sendFeedback', methods=["POST"])
 def sendFeedback():
     data = request.get_json()
-    body = data['description'] + "\n \n" + data['csv']
-    body = body.replace("\n", " <br> ")
+
+    #create temporary file
+    file = tempfile.NamedTemporaryFile()
+    file.write(data['scv'])
+
+    url = "https://be.trustifi.com/api/i/v1/attachment"
+    payload = {}
+    files = [
+        ('file', ('file', file, 'application/octet-stream'))
+    ]
+    headers = {
+        'x-trustifi-key': os.environ['TRUSTIFI_KEY'],
+        'x-trustifi-secret': os.environ['TRUSTIFI_SECRET']
+    }
+    response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+    print(response)
+    file.close()
+
+    body = "Feedback: \n" + data['description'] + "\n \n" + data['csv']
     print(body)
+    body = body.replace("\n", " <br> ")
 
     url = os.environ['TRUSTIFI_URL']+'/api/i/v1/email'
-
     payload = "{\"recipients\":[{\"email\":\"" + os.environ['MAIL'] + \
               "\"}],\"title\":\"new doctorBN feedback\",\"html\":\"" + \
               body + "\"}"
@@ -201,9 +219,13 @@ def sendFeedback():
       'x-trustifi-secret': os.environ['TRUSTIFI_SECRET'],
       'Content-Type': 'application/json'
     }
-
     response = requests.request('POST', url, headers = headers, data = payload)
     print(response.json())
+
+    
+
+    print(response.text)
+
     return 'successful'
 
 
