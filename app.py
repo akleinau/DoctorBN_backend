@@ -184,13 +184,16 @@ def openNetwork():
     return ''
 """
 
-@app.route('/sendFeedback')
+@app.route('/sendFeedback', methods=["POST"])
 def sendFeedback():
-
+    data = request.get_json()
+    description = data['description']
 
     url = os.environ['TRUSTIFI_URL']+'/api/i/v1/email'
 
-    payload = "{\"recipients\":[{\"email\":\"" + os.environ['MAIL'] + "\"}],\"title\":\"Hello\",\"html\":\"Hello World\"}"
+    payload = "{\"recipients\":[{\"email\":\"" + os.environ['MAIL'] + \
+              "\"}],\"title\":\"new doctorBN feedback\",\"html\":\"" + \
+              description + "\"}"
     headers = {
       'x-trustifi-key': os.environ['TRUSTIFI_KEY'],
       'x-trustifi-secret': os.environ['TRUSTIFI_SECRET'],
@@ -199,6 +202,7 @@ def sendFeedback():
 
     response = requests.request('POST', url, headers = headers, data = payload)
     print(response.json())
+    return 'successful'
 
 
 
