@@ -190,7 +190,7 @@ def sendFeedback():
 
     #create temporary file
     file = tempfile.NamedTemporaryFile()
-    file.write(data['csv'])
+    file.write(data['csv'].encode('utf-8'))
 
     url = "https://be.trustifi.com/api/i/v1/attachment"
     payload = {}
