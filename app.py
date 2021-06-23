@@ -203,7 +203,7 @@ def sendFeedback():
     }
     response = requests.request("POST", url, headers=headers, data=payload, files=files)
 
-    print(response)
+    print(response.body)
     file.close()
 
     body = "Feedback: \n" + data['description'] + "\n \n" + data['csv']
