@@ -187,13 +187,13 @@ def openNetwork():
 @app.route('/sendFeedback', methods=["POST"])
 def sendFeedback():
     data = request.get_json()
-    description = data['description']
+    body = data['description'] + "\n \n" + data['csv']
 
     url = os.environ['TRUSTIFI_URL']+'/api/i/v1/email'
 
     payload = "{\"recipients\":[{\"email\":\"" + os.environ['MAIL'] + \
               "\"}],\"title\":\"new doctorBN feedback\",\"html\":\"" + \
-              description + "\"}"
+              body + "\"}"
     headers = {
       'x-trustifi-key': os.environ['TRUSTIFI_KEY'],
       'x-trustifi-secret': os.environ['TRUSTIFI_SECRET'],
