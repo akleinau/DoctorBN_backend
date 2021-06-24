@@ -12,6 +12,5 @@ gunicorn==20.1.0
 psycopg2-binary
 click
 requests
-io
 smtplib
 email
