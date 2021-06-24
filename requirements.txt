@@ -14,7 +14,4 @@ click
 requests
 io
 smtplib
-email.mime.multipart
-email.mime.text
-email.mime.base
 email
