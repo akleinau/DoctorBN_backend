@@ -201,11 +201,12 @@ def sendFeedback():
     msg['To'] = os.environ["RECEIVEMAIL"]
     msg['Subject'] = "New DoctorBN feedback"
     msg.attach(MIMEText(body, 'plain'))
-    p = MIMEBase('application', 'octet-stream')
-    p.set_payload(io.StringIO(data['csv']).read())
-    encoders.encode_base64(p)
-    p.add_header('Content-Disposition', "attachment; filename= feedback.csv")
-    msg.attach(p)
+    if data['csv'] != "NONE":
+        p = MIMEBase('application', 'octet-stream')
+        p.set_payload(io.StringIO(data['csv']).read())
+        encoders.encode_base64(p)
+        p.add_header('Content-Disposition', "attachment; filename= feedback.csv")
+        msg.attach(p)
 
     text = msg.as_string()
 
