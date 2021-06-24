@@ -8,6 +8,11 @@ from py_src.Scenario import Scenario
 import click
 import os, io, requests
 import tempfile
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 
 ALLOWED_EXTENSIONS = ['.bif']
 TEMPLATE_FOLDER = os.path.abspath('./src')
@@ -188,46 +193,27 @@ def openNetwork():
 def sendFeedback():
     data = request.get_json()
 
-    #create temporary file
-    file = tempfile.NamedTemporaryFile()
-    file.write(b'Hello World')
-    file.write(data['csv'].encode('utf-8'))
-    file.seek(0)
-    print(file.read())
-    file.seek(0)
-    url = "https://be.trustifi.com/api/i/v1/attachment"
-    payload = {}
-    files = [
-        ('file', ('file', io.StringIO("HelloWorld"), 'application/octet-stream'))
-    ]
-    headers = {
-        'x-trustifi-key': os.environ['TRUSTIFI_KEY'],
-        'x-trustifi-secret': os.environ['TRUSTIFI_SECRET']
-    }
-    response = requests.request("POST", url, headers=headers, data=payload, files=files)
-
-    print(response.text)
-    file.close()
-
-    body = "Feedback: \n" + data['description'] + "\n \n" + data['csv']
+    body = "Feedback: \n" + data['description'] + "\n \n" + "see attachment if the user added his configuration."
     print(body)
-    body = body.replace("\n", " <br> ")
 
-    url = os.environ['TRUSTIFI_URL']+'/api/i/v1/email'
-    payload = "{\"recipients\":[{\"email\":\"" + os.environ['MAIL'] + \
-              "\"}],\"title\":\"new doctorBN feedback\",\"html\":\"" + \
-              body + "\"}"
-    headers = {
-      'x-trustifi-key': os.environ['TRUSTIFI_KEY'],
-      'x-trustifi-secret': os.environ['TRUSTIFI_SECRET'],
-      'Content-Type': 'application/json'
-    }
-    response = requests.request('POST', url, headers = headers, data = payload)
-    print(response.json())
+    msg = MIMEMultipart()
+    msg['From'] = os.environ["SENDMAIL"]
+    msg['To'] = os.environ["RECEIVEMAIL"]
+    msg['Subject'] = "New DoctorBN feedback"
+    msg.attach(MIMEText(body, 'plain'))
+    p = MIMEBase('application', 'octet-stream')
+    p.set_payload(io.StringIO(data['csv']).read())
+    encoders.encode_base64(p)
+    p.add_header('Content-Disposition', "attachment; filename= feedback.csv")
+    msg.attach(p)
 
+    text = msg.as_string()
 
-
-    print(response.text)
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.starttls()
+    s.login(os.environ["SENDMAIL"], os.environ["SENDMAILPASSWORD"])
+    s.sendmail(os.environ["SENDMAIL"], os.environ["RECEIVEMAIL"], text)
+    s.quit()
 
     return 'successful'
 
