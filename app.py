@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from py_src.Network import Network
 from py_src.Scenario import Scenario
 import click
-import os, requests
+import os, io, requests
 import tempfile
 
 ALLOWED_EXTENSIONS = ['.bif']
@@ -190,12 +190,15 @@ def sendFeedback():
 
     #create temporary file
     file = tempfile.NamedTemporaryFile()
+    file.write(b'Hello World')
     file.write(data['csv'].encode('utf-8'))
-
+    file.seek(0)
+    print(file.read())
+    file.seek(0)
     url = "https://be.trustifi.com/api/i/v1/attachment"
     payload = {}
     files = [
-        ('file', ('file', file, 'application/octet-stream'))
+        ('file', ('file', io.StringIO("HelloWorld"), 'application/octet-stream'))
     ]
     headers = {
         'x-trustifi-key': os.environ['TRUSTIFI_KEY'],
