@@ -13,7 +13,6 @@ class Scenario:
     def __init__(self, network, evidences=None, targets=None, goals=None):
 
         self.patient = Patient()
-
         self.network = Network(network)
         if evidences is not None: self.patient.evidences = evidences
         if targets is not None: self.patient.targets = targets
@@ -59,58 +58,41 @@ class Scenario:
 
 
     def compute_target_combs_for_goals(self):
-        #n = pow(2, len(self.patient.targets))
-        results = []
-        # clique-inspired: if A,B is worse then A, then A,B,C won't be better then AC
-        # for i in range(1, n):
-        #     chosenTargets = []
-        #     value = i
-        #     for target in self.patient.targets:
-        #         if int(value%2) == 1: chosenTargets.append(target)
-        #         value = value / 2
-
-        #no clique for computation speed
-        results = results + self.compute_target_for_goals(self.patient.targets)
-
-        results.sort(key=lambda a: a['value'], reverse=True)
-        return results
-
-    #compute_target_combs with just one target
-    def compute_target_for_goals(self, targets):
         infer = inference.VariableElimination(self.network.model)
 
         states = []
         n = [1]
-        #get dict with all states
-        for target in targets:
+        # get dict with all states
+        for target in self.patient.targets:
             states.append({'name': target, 'states': self.network.states[target]})
-            n.append(n[len(n)-1] * len(self.network.states[target]))
+            n.append(n[len(n) - 1] * len(self.network.states[target]))
 
         results = []
-        for i in range(n[len(n)-1]):
+        for i in range(n[len(n) - 1]):
             goalNames = self.patient.goals.keys()
             simEvidence = self.patient.evidences.copy()
             option = {}
 
             index = i
             for j, target in sorted(enumerate(states), reverse=True):
-                simEvidence[target['name']] = states[j]['states'][int(index/n[j])]
-                option[target['name']] = states[j]['states'][int(index/n[j])]
-                index = index%n[j]
+                simEvidence[target['name']] = states[j]['states'][int(index / n[j])]
+                option[target['name']] = states[j]['states'][int(index / n[j])]
+                index = index % n[j]
 
             distribution = infer.query(list(goalNames), evidence=simEvidence)
             value = distribution.values
             goalValues = {}
             for i, goal in enumerate(distribution.variables):
-                optionNum =distribution.name_to_no[goal][self.patient.goals[goal]]
+                optionNum = distribution.name_to_no[goal][self.patient.goals[goal]]
                 value = value[optionNum]
                 dimension = distribution.variables.index(goal)
                 singleGoalDist = sumND.getMarginalProbability(distribution.values, dimension)
                 goalValues[goal] = singleGoalDist[optionNum]
 
             results.append({'option': option, 'value': value, 'goalValues': goalValues})
-
+        results.sort(key=lambda a: a['value'], reverse=True)
         return results
+
 
     def compute_all_nodes(self):
         infer = inference.VariableElimination(self.network.model)
@@ -122,15 +104,16 @@ class Scenario:
             else:
                 calcNodes.append(node)
 
-        #this gives back as distribution.values an n-dim array with one dimension per calculated node
-        #now we calculate the marginal probabilities per dimension to get the individual state probabilities of that node
-        distribution = infer.query(calcNodes, evidence=self.patient.evidences)
-        distribution_wo_evidence = infer.query(calcNodes)
         for node in calcNodes:
-            dimension = distribution.variables.index(node)
-            stateProbabilities = sumND.getMarginalProbability(distribution.values, dimension)
-            dimension_wo_evidence = distribution_wo_evidence.variables.index(node)
-            stateProbabilities_wo_evidence = sumND.getMarginalProbability(distribution_wo_evidence.values, dimension_wo_evidence)
+            #calculate probabilities with evidence
+            distribution = infer.query([node], evidence=self.patient.evidences)
+            stateProbabilities = distribution.values
+
+            # calculate probabilities without evidence
+            distribution_wo_evidence = infer.query([node])
+            stateProbabilities_wo_evidence = distribution_wo_evidence.values
+
+            #calculate node attributes
             divergence = relevance.compute_jensen_shannon_divergence(stateProbabilities, stateProbabilities_wo_evidence)
             maxProbability = np.amax(stateProbabilities)
             state = np.where(stateProbabilities == maxProbability)[0][0]
