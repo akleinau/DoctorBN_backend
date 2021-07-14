@@ -29,10 +29,6 @@ CORS(app)
 def create_tables():
     db.create_all()
 
-
-app.cli.add_command(create_tables)
-
-
 @app.route('/getNetwork')
 def getNetwork():
     data = request
