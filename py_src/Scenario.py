@@ -96,6 +96,7 @@ class Scenario:
 
     def compute_all_nodes(self):
         infer = inference.VariableElimination(self.network.model)
+        #sort out which nodes are already given or have to be calculated
         nodes = []
         calcNodes = []
         for node in self.network.states:

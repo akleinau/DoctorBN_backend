@@ -14,7 +14,7 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 
-ALLOWED_EXTENSIONS = ['.bif']
+ALLOWED_EXTENSIONS = ['.net']
 TEMPLATE_FOLDER = os.path.abspath('./src')
 app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
 app.config.from_pyfile('settings.py')
