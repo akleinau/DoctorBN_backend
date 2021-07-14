@@ -25,9 +25,7 @@ app.config.from_pyfile('settings.py')
 db = SQLAlchemy(app)
 CORS(app)
 
-@click.command(name='create_tables')
 @app.route('/create_tables')
-@with_appcontext
 def create_tables():
     db.create_all()
 
