@@ -7,6 +7,6 @@ class Network:
     def __init__(self, name):
         reader = NETReader(string=name, n_jobs=1)
         self.model = reader.get_model()
-        self.states = reader.get_states()
-        self.edges = reader.variable_edges
+        self.states = reader.state_names
+        self.edges = reader.edge_list
 
