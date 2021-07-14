@@ -21,7 +21,6 @@ app.config.from_pyfile('settings.py')
 # app.config['NETWORK_FOLDER'] = NETWORK_FOLDER
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 CORS(app)
 
