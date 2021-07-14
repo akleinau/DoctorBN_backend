@@ -34,7 +34,8 @@ def getNetwork():
     data = request
     network = getNetworkInDatabase(data.args.get('network'))
     s = Scenario(network.fileString)
-    return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description}
+    return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description,
+            'labels': s.network.labels}
 
 
 @app.route('/calcTargetForGoals', methods=['POST'])
