@@ -31,7 +31,9 @@ def create_tables():
 @app.route('/getNetwork')
 def getNetwork():
     data = request
-    network = getNetworkInDatabase(data.args.get('network'))
+    network = data.args.get('localNetwork') #load the local network directly from user pc
+    if not network:
+        network = getNetworkInDatabase(data.args.get('network')) #else load from database
     s = Scenario(network.fileString)
     return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description,
             'labels': s.network.labels}
@@ -40,7 +42,9 @@ def getNetwork():
 @app.route('/calcTargetForGoals', methods=['POST'])
 def calcTargetForGoals():
     data = request.get_json()
-    network = getNetworkInDatabase(data['network']).fileString
+    network = data['localNetwork'] #load the local network directly from user pc
+    if not network:
+        network = getNetworkInDatabase(data['network']).fileString #else load from database
     s = Scenario(network, evidences=data['evidences'], targets=data['target'], goals=data['goals'])
     results = s.compute_target_combs_for_goals()
     likely_results = s.compute_goals()
@@ -57,7 +61,9 @@ def calcOptions():
         relevanceEvidences[ev] = data['evidences'][ev]
     for op in data['options']:
         relevanceEvidences[op] = data['options'][op]
-    network = getNetworkInDatabase(data['network']).fileString
+    network = data['localNetwork']  # load the local network directly from user pc
+    if not network:
+        network = getNetworkInDatabase(data['network']).fileString  # else load from database
 
     #explanation calculation
     s = Scenario(network, evidences=relevanceEvidences, goals=data['goals'])
