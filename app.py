@@ -42,8 +42,9 @@ def getNetwork():
 @app.route('/calcTargetForGoals', methods=['POST'])
 def calcTargetForGoals():
     data = request.get_json()
-    network = data['localNetwork'] #load the local network directly from user pc
-    if not network:
+    if 'localNetwork' in data:
+        network = data['localNetwork'] #load the local network directly from user pc
+    else:
         network = getNetworkInDatabase(data['network']).fileString #else load from database
     s = Scenario(network, evidences=data['evidences'], targets=data['target'], goals=data['goals'])
     results = s.compute_target_combs_for_goals()
@@ -61,8 +62,9 @@ def calcOptions():
         relevanceEvidences[ev] = data['evidences'][ev]
     for op in data['options']:
         relevanceEvidences[op] = data['options'][op]
-    network = data['localNetwork']  # load the local network directly from user pc
-    if not network:
+    if 'localNetwork' in data:
+        network = data['localNetwork']  # load the local network directly from user pc
+    else:
         network = getNetworkInDatabase(data['network']).fileString  # else load from database
 
     #explanation calculation
