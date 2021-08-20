@@ -31,13 +31,19 @@ def create_tables():
 @app.route('/getNetwork')
 def getNetwork():
     data = request
-    network = data.args.get('localNetwork') #load the local network directly from user pc
-    if not network:
-        network = getNetworkInDatabase(data.args.get('network')) #else load from database
+    network = getNetworkInDatabase(data.args.get('network')) #else load from database
     s = Scenario(network.fileString)
     return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description,
             'labels': s.network.labels}
 
+
+@app.route('/getLocalNetwork', methods=['POST'])
+def getLocalNetwork():
+    data = request.get_json()
+    network = data['localNetwork']
+    s = Scenario(network.fileString)
+    return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description,
+            'labels': s.network.labels}
 
 @app.route('/calcTargetForGoals', methods=['POST'])
 def calcTargetForGoals():
