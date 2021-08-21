@@ -47,7 +47,7 @@ def getLocalNetwork():
 @app.route('/calcTargetForGoals', methods=['POST'])
 def calcTargetForGoals():
     data = request.get_json()
-    if 'localNetwork' in data:
+    if 'fileString' in data:
         network = data['fileString'] #load the local network directly from user pc
     else:
         network = getNetworkInDatabase(data['network']).fileString #else load from database
@@ -67,7 +67,7 @@ def calcOptions():
         relevanceEvidences[ev] = data['evidences'][ev]
     for op in data['options']:
         relevanceEvidences[op] = data['options'][op]
-    if 'localNetwork' in data:
+    if 'fileString' in data:
         network = data['fileString']  # load the local network directly from user pc
     else:
         network = getNetworkInDatabase(data['network']).fileString  # else load from database
