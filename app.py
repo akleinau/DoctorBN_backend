@@ -41,8 +41,8 @@ def getNetwork():
 def getLocalNetwork():
     data = request.get_json()
     network = data['localNetwork']
-    s = Scenario(network.fileString)
-    return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description,
+    s = Scenario(network["fileString"])
+    return {'states': s.network.states, 'edges': s.network.edges, 'description': network["description"],
             'labels': s.network.labels}
 
 @app.route('/calcTargetForGoals', methods=['POST'])
