@@ -227,7 +227,34 @@ def sendFeedback():
 
     return 'successful'
 
+@app.route('/sendNetwork', methods=["POST"])
+def sendFeedback():
+    data = request.get_json()
 
+    body = "A new network got uploaded with the request to publish it on DoctorBN."
+    print(body)
+
+    msg = MIMEMultipart()
+    msg['From'] = os.environ["SENDMAIL"]
+    msg['To'] = os.environ["RECEIVEMAIL"]
+    msg['Subject'] = "New DoctorBN network publish request"
+    msg.attach(MIMEText(body, 'plain'))
+    p = MIMEBase('application', 'octet-stream')
+    p.set_payload(io.StringIO(data['fileString']).read())
+    encoders.encode_base64(p)
+    filename = data['name'] + "." + data['fileFormat']
+    p.add_header('Content-Disposition', "attachment; filename= "+filename)
+    msg.attach(p)
+
+    text = msg.as_string()
+
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.starttls()
+    s.login(os.environ["SENDMAIL"], os.environ["SENDMAILPASSWORD"])
+    s.sendmail(os.environ["SENDMAIL"], os.environ["RECEIVEMAIL"], text)
+    s.quit()
+
+    return 'successful'
 
 @app.route('/')
 def home():
