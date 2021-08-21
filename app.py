@@ -48,7 +48,7 @@ def getLocalNetwork():
 def calcTargetForGoals():
     data = request.get_json()
     if 'localNetwork' in data:
-        network = data['localNetwork'].fileString #load the local network directly from user pc
+        network = data['fileString'] #load the local network directly from user pc
     else:
         network = getNetworkInDatabase(data['network']).fileString #else load from database
     s = Scenario(network, evidences=data['evidences'], targets=data['target'], goals=data['goals'])
@@ -68,7 +68,7 @@ def calcOptions():
     for op in data['options']:
         relevanceEvidences[op] = data['options'][op]
     if 'localNetwork' in data:
-        network = data['localNetwork'].fileString  # load the local network directly from user pc
+        network = data['fileString']  # load the local network directly from user pc
     else:
         network = getNetworkInDatabase(data['network']).fileString  # else load from database
 
