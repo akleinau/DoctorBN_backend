@@ -32,7 +32,7 @@ def create_tables():
 def getNetwork():
     data = request
     network = getNetworkInDatabase(data.args.get('network')) #else load from database
-    s = Scenario(network.fileString)
+    s = Scenario(network.fileString, "net")
     return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description,
             'labels': s.network.labels}
 
@@ -40,7 +40,7 @@ def getNetwork():
 @app.route('/getLocalNetwork', methods=['POST'])
 def getLocalNetwork():
     network = request.get_json()
-    s = Scenario(network["fileString"])
+    s = Scenario(network["fileString"], network["fileFormat"])
     return {'states': s.network.states, 'edges': s.network.edges, 'description': network["description"],
             'labels': s.network.labels}
 
@@ -49,9 +49,11 @@ def calcTargetForGoals():
     data = request.get_json()
     if 'fileString' in data:
         network = data['fileString'] #load the local network directly from user pc
+        fileFormat = data["fileFormat"]
     else:
         network = getNetworkInDatabase(data['network']).fileString #else load from database
-    s = Scenario(network, evidences=data['evidences'], targets=data['target'], goals=data['goals'])
+        fileFormat = "net"
+    s = Scenario(network, fileFormat, evidences=data['evidences'], targets=data['target'], goals=data['goals'])
     results = s.compute_target_combs_for_goals()
     likely_results = s.compute_goals()
     return {'optionResults': results, 'likelyResults': likely_results}
@@ -69,11 +71,13 @@ def calcOptions():
         relevanceEvidences[op] = data['options'][op]
     if 'fileString' in data:
         network = data['fileString']  # load the local network directly from user pc
+        fileFormat = data["fileFormat"]
     else:
         network = getNetworkInDatabase(data['network']).fileString  # else load from database
+        fileFormat = "net"
 
     #explanation calculation
-    s = Scenario(network, evidences=relevanceEvidences, goals=data['goals'])
+    s = Scenario(network, fileFormat, evidences=relevanceEvidences, goals=data['goals'])
     nodes = s.compute_all_nodes()
     relevance = s.compute_relevancies_for_goals()
     most_relevant_nodes = list(map(lambda a: a['node_name'],
