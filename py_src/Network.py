@@ -16,7 +16,7 @@ class Network:
         elif fileFormat == "bif":
             reader = BIFReader(string=fileString, n_jobs=1)
             self.model = reader.get_model()
-            self.states = reader.state_names
-            self.edges = reader.edge_list
-            self.labels = reader.labels
+            self.states = reader.get_states()
+            self.edges = reader.variable_edges
+            self.labels = {key: key for key in self.states}
 
