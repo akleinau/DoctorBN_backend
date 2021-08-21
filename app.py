@@ -39,8 +39,7 @@ def getNetwork():
 
 @app.route('/getLocalNetwork', methods=['POST'])
 def getLocalNetwork():
-    data = request.get_json()
-    network = data['localNetwork']
+    network = request.get_json()
     s = Scenario(network["fileString"])
     return {'states': s.network.states, 'edges': s.network.edges, 'description': network["description"],
             'labels': s.network.labels}
