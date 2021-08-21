@@ -227,8 +227,8 @@ def sendFeedback():
 
     return 'successful'
 
-@app.route('/sendNetwork', methods=["POST"])
-def sendFeedback():
+@app.route('/sendNetworkRequest', methods=["POST"])
+def sendNetworkRequest():
     data = request.get_json()
 
     body = "A new network got uploaded with the request to publish it on DoctorBN."
