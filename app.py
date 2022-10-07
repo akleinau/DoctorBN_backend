@@ -34,7 +34,7 @@ def getNetwork():
     network = getNetworkInDatabase(data.args.get('network')) #else load from database
     s = Scenario(network.fileString, "net")
     return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description,
-            'labels': s.network.labels}
+            'labels': s.network.labels, 'customization': network.customization}
 
 
 @app.route('/getLocalNetwork', methods=['POST'])
