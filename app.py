@@ -112,6 +112,7 @@ class NetworkData(db.Model):
     fileString = db.Column(db.String(), nullable=False)
     displayName = db.Column(db.String(), primary_key=True, nullable=False)
     description = db.Column(db.String(), nullable=True)
+    customization = db.Column(db.String(), nullable=True)
 
     def __repr__(self):
         return self.displayName
