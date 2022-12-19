@@ -53,7 +53,8 @@ def calcTargetForGoals():
     else:
         network = getNetworkInDatabase(data['network']).fileString #else load from database
         fileFormat = "net"
-    s = Scenario(network, fileFormat, evidences=data['evidences'], targets=data['target'], goals=data['goals'])
+    s = Scenario(network, fileFormat, evidences=data['evidences'], targets=data['target'], goals=data['goals'],
+                 goalDirections=data['goalDirections'])
     results = s.compute_target_combs_for_goals()
     likely_results = s.compute_goals()
     return {'optionResults': results, 'likelyResults': likely_results}
@@ -77,7 +78,8 @@ def calcOptions():
         fileFormat = "net"
 
     #explanation calculation
-    s = Scenario(network, fileFormat, evidences=relevanceEvidences, goals=data['goals'])
+    s = Scenario(network, fileFormat, evidences=relevanceEvidences, goals=data['goals'],
+                 goalDirections=data['goalDirections'])
     nodes = s.compute_all_nodes()
     relevance = s.compute_relevancies_for_goals()
     most_relevant_nodes = list(map(lambda a: a['node_name'],

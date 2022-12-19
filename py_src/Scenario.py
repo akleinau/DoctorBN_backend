@@ -6,19 +6,21 @@ import py_src.explanation as explanation
 import numpy as np
 import py_src.sumNDimensionalArray as sumND
 
+
 class Scenario:
     targets = []
     goals = {}
 
-    def __init__(self, network, fileFormat, evidences=None, targets=None, goals=None):
+    def __init__(self, network, fileFormat, evidences=None, targets=None, goals=None, goalDirections=None):
 
         self.patient = Patient()
         self.network = Network(network, fileFormat)
         if evidences is not None: self.patient.evidences = evidences
         if targets is not None: self.patient.targets = targets
         if goals is not None: self.patient.goals = goals
+        if goalDirections is not None: self.patient.goalDirections = goalDirections
 
-    #computes the values for the targets
+    # computes the values for the targets
     def compute_targets(self):
         infer = inference.VariableElimination(self.network.model)
 
@@ -42,7 +44,6 @@ class Scenario:
 
         return {'value': value, 'goalValues': goalValues}
 
-
     def compute_relevancies_for_goals(self):
         return relevance.get_influence_of_evidences_on_goals(self.network.model,
                                                              self.patient.evidences,
@@ -55,7 +56,6 @@ class Scenario:
                                                          self.patient.goals,
                                                          most_relevant_nodes,
                                                          nodes)
-
 
     def compute_target_combs_for_goals(self):
         infer = inference.VariableElimination(self.network.model)
@@ -75,28 +75,40 @@ class Scenario:
 
             index = i
             for j, target in sorted(enumerate(states), reverse=True):
-                simEvidence[target['name']] = states[j]['states'][int(index / n[j])]
+                simEvidence[target['name']] = states[j]['states'][int(index / n[j])]  # add targets as evidence
                 option[target['name']] = states[j]['states'][int(index / n[j])]
                 index = index % n[j]
 
             distribution = infer.query(list(goalNames), evidence=simEvidence)
-            value = distribution.values
+            value = distribution.values  # conditional probability table CPT
             goalValues = {}
             for i, goal in enumerate(distribution.variables):
                 optionNum = distribution.name_to_no[goal][self.patient.goals[goal]]
-                value = value[optionNum]
+                if self.patient.goalDirections[goal] == "maximize":
+                    value = value[optionNum]  # singles down the CPT on selected goals, one goal each iteration
+                if self.patient.goalDirections[goal] == "minimize":
+                    # sum over all other columns and add them together
+                    opposite_value = []
+                    for j, column in enumerate(value):
+                        if j == optionNum:
+                            continue
+                        if optionNum == 0 and j == 1  or optionNum != 0 and j == 0:
+                            opposite_value = column
+                        else:
+                            opposite_value += column
+                    value = opposite_value
+
                 dimension = distribution.variables.index(goal)
                 singleGoalDist = sumND.getMarginalProbability(distribution.values, dimension)
                 goalValues[goal] = singleGoalDist[optionNum]
 
             results.append({'option': option, 'value': value, 'goalValues': goalValues})
-        results.sort(key=lambda a: a['value'], reverse=True)
+        results.sort(key=lambda a: a['value'], reverse=True)  # sort by overall probability of achieving goals
         return results
-
 
     def compute_all_nodes(self):
         infer = inference.VariableElimination(self.network.model)
-        #sort out which nodes are already given or have to be calculated
+        # sort out which nodes are already given or have to be calculated
         nodes = []
         calcNodes = []
         for node in self.network.states:
@@ -106,7 +118,7 @@ class Scenario:
                 calcNodes.append(node)
 
         for node in calcNodes:
-            #calculate probabilities with evidence
+            # calculate probabilities with evidence
             distribution = infer.query([node], evidence=self.patient.evidences)
             stateProbabilities = distribution.values
 
@@ -114,12 +126,13 @@ class Scenario:
             distribution_wo_evidence = infer.query([node])
             stateProbabilities_wo_evidence = distribution_wo_evidence.values
 
-            #calculate node attributes
+            # calculate node attributes
             divergence = relevance.compute_jensen_shannon_divergence(stateProbabilities, stateProbabilities_wo_evidence)
             maxProbability = np.amax(stateProbabilities)
             state = np.where(stateProbabilities == maxProbability)[0][0]
             stateName = distribution.no_to_name[node][state]
             nodes.append({"name": node, "state": stateName, "probability": maxProbability, "divergence": divergence,
-                          "distribution": list(stateProbabilities), "distribution_wo_evidence": list(stateProbabilities_wo_evidence)})
+                          "distribution": list(stateProbabilities),
+                          "distribution_wo_evidence": list(stateProbabilities_wo_evidence)})
 
         return nodes
