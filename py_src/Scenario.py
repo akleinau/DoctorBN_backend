@@ -84,15 +84,15 @@ class Scenario:
             goalValues = {}
             for i, goal in enumerate(distribution.variables):
                 optionNum = distribution.name_to_no[goal][self.patient.goals[goal]]
-                if self.patient.goalDirections[goal] == "maximize":
+                if self.patient.goalDirections[goal] == "max":
                     value = value[optionNum]  # singles down the CPT on selected goals, one goal each iteration
-                if self.patient.goalDirections[goal] == "minimize":
+                if self.patient.goalDirections[goal] == "min":
                     # sum over all other columns and add them together
                     opposite_value = []
                     for j, column in enumerate(value):
                         if j == optionNum:
                             continue
-                        if optionNum == 0 and j == 1  or optionNum != 0 and j == 0:
+                        if optionNum == 0 and j == 1 or optionNum != 0 and j == 0:
                             opposite_value = column
                         else:
                             opposite_value += column
