@@ -47,7 +47,8 @@ class Scenario:
     def compute_relevancies_for_goals(self):
         return relevance.get_influence_of_evidences_on_goals(self.network.model,
                                                              self.patient.evidences,
-                                                             self.patient.goals)
+                                                             self.patient.goals,
+                                                             self.patient.goalDirections)
 
     def compute_explanation_of_goals(self, interventions, most_relevant_nodes, nodes):
         return explanation.compute_explanation_of_target(self.network.model,

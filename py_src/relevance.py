@@ -39,7 +39,7 @@ def compute_relevancies_for_outcome_states(distribution_1, distribution_2):
     return all_rel_objects_for_current_node
 
 #nodes includes distributions with and without evidence for all nodes
-def get_influence_of_evidences_on_goals(network, evidences, goals):
+def get_influence_of_evidences_on_goals(network, evidences, goals, goalDirections):
 
     all_relevance_of_evidence_objects = []  # list with all evidences and their relevances
     infer = inference.VariableElimination(network)
@@ -80,6 +80,10 @@ def get_influence_of_evidences_on_goals(network, evidences, goals):
             value2 = distribution2[optionNum2]
 
             rel_of_ev_obj["relevancies"][str(goal) + ": " + str(goals[goal])] = value1 - value2
+            if goalDirections[goal] == "max":
+                rel_of_ev_obj["relevancies"][str(goal) + ": " + str(goals[goal])] = value1 - value2
+            if goalDirections[goal] == "min":
+                rel_of_ev_obj["relevancies"][str(goal) + ": " + str(goals[goal])] = value2 - value1
 
 
         # compute if recommendation changer
