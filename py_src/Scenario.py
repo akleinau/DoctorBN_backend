@@ -122,6 +122,7 @@ class Scenario:
             # calculate probabilities with evidence
             distribution = infer.query([node], evidence=self.patient.evidences)
             stateProbabilities = distribution.values
+            allStateNames = distribution.no_to_name[node]
 
             # calculate probabilities without evidence
             distribution_wo_evidence = infer.query([node])
@@ -133,6 +134,7 @@ class Scenario:
             state = np.where(stateProbabilities == maxProbability)[0][0]
             stateName = distribution.no_to_name[node][state]
             nodes.append({"name": node, "state": stateName, "probability": maxProbability, "divergence": divergence,
+                          "stateNames": allStateNames,
                           "distribution": list(stateProbabilities),
                           "distribution_wo_evidence": list(stateProbabilities_wo_evidence)})
 
