@@ -13,6 +13,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+import datetime
+from random import random
 
 ALLOWED_EXTENSIONS = ['.net']
 TEMPLATE_FOLDER = os.path.abspath('./src')
@@ -200,33 +202,25 @@ def openNetwork():
         NETWORKS[selectedNetwork] = path
     return ''
 """
+class Feedback(db.Model):
+    description = db.Column(db.String(), nullable=True)
+    csv = db.Column(db.String(),  nullable=True)
+    date = db.Column(db.String(), nullable=True)
+    ID = db.Column(db.String(), primary_key=True, nullable=False)
+
+    def __repr__(self):
+        return self.displayName
 
 @app.route('/sendFeedback', methods=["POST"])
 def sendFeedback():
     data = request.get_json()
+    newFeedback = Feedback(description=data['description'],
+                             csv=data['csv'],
+                             date=datetime.datetime.now(),
+                             ID=str(datetime.datetime.now()) + " - " + str(random()))
+    db.session.add(newFeedback)
+    db.session.commit()
 
-    body = "Feedback: \n" + data['description'] + "\n \n" + "see attachment if the user added his configuration."
-    print(body)
-
-    msg = MIMEMultipart()
-    msg['From'] = os.environ["SENDMAIL"]
-    msg['To'] = os.environ["RECEIVEMAIL"]
-    msg['Subject'] = "New DoctorBN feedback"
-    msg.attach(MIMEText(body, 'plain'))
-    if data['csv'] != "NONE":
-        p = MIMEBase('application', 'octet-stream')
-        p.set_payload(io.StringIO(data['csv']).read())
-        encoders.encode_base64(p)
-        p.add_header('Content-Disposition', "attachment; filename= feedback.csv")
-        msg.attach(p)
-
-    text = msg.as_string()
-
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-    s.starttls()
-    s.login(os.environ["SENDMAIL"], os.environ["SENDMAILPASSWORD"])
-    s.sendmail(os.environ["SENDMAIL"], os.environ["RECEIVEMAIL"], text)
-    s.quit()
 
     return 'successful'
 
