@@ -207,6 +207,7 @@ class Feedback(db.Model):
     csv = db.Column(db.String(),  nullable=True)
     date = db.Column(db.String(), nullable=True)
     ID = db.Column(db.String(), primary_key=True, nullable=False)
+    mail = db.Column(db.String(), nullable=True)
 
     def __repr__(self):
         return self.displayName
@@ -217,7 +218,8 @@ def sendFeedback():
     newFeedback = Feedback(description=data['description'],
                              csv=data['csv'],
                              date=datetime.datetime.now(),
-                             ID=str(datetime.datetime.now()) + " - " + str(random()))
+                             ID=str(datetime.datetime.now()) + " - " + str(random()),
+                             mail=data['mail'])
     db.session.add(newFeedback)
     db.session.commit()
 
