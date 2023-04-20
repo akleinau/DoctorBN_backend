@@ -80,10 +80,6 @@ def get_influence_of_evidences_on_goals(network, evidences, goals, goalDirection
             value2 = distribution2[optionNum2]
 
             rel_of_ev_obj["relevancies"][str(goal) + ": " + str(goals[goal])] = value1 - value2
-            if goalDirections[goal] == "max":
-                rel_of_ev_obj["relevancies"][str(goal) + ": " + str(goals[goal])] = value1 - value2
-            if goalDirections[goal] == "min":
-                rel_of_ev_obj["relevancies"][str(goal) + ": " + str(goals[goal])] = value2 - value1
 
 
         # compute if recommendation changer
