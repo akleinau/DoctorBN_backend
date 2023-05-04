@@ -34,7 +34,7 @@ def create_tables():
 def getNetwork():
     data = request
     network = getNetworkInDatabase(data.args.get('network')) #else load from database
-    s = Scenario(network.fileString, "net")
+    s = Scenario(network.fileString, network.fileFormat)
     return {'states': s.network.states, 'edges': s.network.edges, 'description': network.description,
             'labels': s.network.labels, 'customization': network.customization}
 
@@ -114,6 +114,7 @@ def openNetwork(selectedNet: str):
 # Database object
 class NetworkData(db.Model):
     fileString = db.Column(db.String(), nullable=False)
+    fileFormat = db.Column(db.String(), nullable=False)
     displayName = db.Column(db.String(), primary_key=True, nullable=False)
     description = db.Column(db.String(), nullable=True)
     customization = db.Column(db.String(), nullable=True)
