@@ -53,8 +53,10 @@ def calcTargetForGoals():
         network = data['fileString'] #load the local network directly from user pc
         fileFormat = data["fileFormat"]
     else:
-        network = getNetworkInDatabase(data['network']).fileString #else load from database
-        fileFormat = "net"
+        # else load from database
+        DBitem = getNetworkInDatabase(data['network'])
+        network = DBitem.fileString
+        fileFormat = DBitem.fileFormat
     s = Scenario(network, fileFormat, evidences=data['evidences'], targets=data['target'], goals=data['goals'],
                  goalDirections=data['goalDirections'])
     results = s.compute_target_combs_for_goals()
@@ -76,8 +78,10 @@ def calcOptions():
         network = data['fileString']  # load the local network directly from user pc
         fileFormat = data["fileFormat"]
     else:
-        network = getNetworkInDatabase(data['network']).fileString  # else load from database
-        fileFormat = "net"
+        # else load from database
+        DBitem = getNetworkInDatabase(data['network'])
+        network = DBitem.fileString
+        fileFormat = DBitem.fileFormat
 
     #explanation calculation
     s = Scenario(network, fileFormat, evidences=relevanceEvidences, goals=data['goals'],
