@@ -1,20 +1,19 @@
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask.cli import with_appcontext
-from werkzeug.utils import secure_filename
-from py_src.Network import Network
-from py_src.Scenario import Scenario
-import click
-import os, io, requests
-import tempfile
+import datetime
+import io
+import os
 import smtplib
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
-import datetime
 from random import random
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+
+from py_src.Network import Network
+from py_src.Scenario import Scenario
 
 ALLOWED_EXTENSIONS = ['.net']
 TEMPLATE_FOLDER = os.path.abspath('./src')
