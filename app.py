@@ -8,9 +8,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from random import random
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, got_request_exception
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+
+import rollbar
+import rollbar.contrib.flask
 
 from py_src.Network import Network
 from py_src.Scenario import Scenario
@@ -24,6 +27,21 @@ app.config.from_pyfile('settings.py')
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
+
+with app.app_context():
+    """init rollbar module"""
+    rollbar.init(
+        # access token
+        os.environ["ROLLBAR_PROJECT_ACCESS_TOKEN"],
+        # environment name - any string, like 'production' or 'development'
+        'production',
+        # server root directory, makes tracebacks prettier
+        root=os.path.dirname(os.path.realpath(__file__)),
+        # flask already sets up logging
+        allow_logging_basic_config=False)
+
+    # send exceptions from `app` to rollbar, using flask's signal system.
+    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 @app.route('/create_tables')
 def create_tables():
