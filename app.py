@@ -245,6 +245,7 @@ def sendFeedback():
     db.session.add(newFeedback)
     db.session.commit()
 
+    rollbar.report_message('Feedback received', 'info', request=request)
 
     return 'successful'
 
