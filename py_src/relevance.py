@@ -45,7 +45,7 @@ def get_influence_of_evidences_on_goals(network, evidences, goals, goalDirection
     infer = inference.VariableElimination(network)
 
     sum_of_all_overall_relevancies = 0  # jennsen-shannon relevances of all targets together
-    distribution_all= infer.query(list(goals.keys()), evidence=evidences)
+    distribution_all= infer.query(list(goals.keys()), evidence=evidences, show_progress=False)
 
     for e in evidences.keys():
 
@@ -56,7 +56,7 @@ def get_influence_of_evidences_on_goals(network, evidences, goals, goalDirection
             if not node == e:
                 evidences_wo[node] = evidences[node]
 
-        distribution_wo = infer.query(list(goals.keys()), evidence=evidences_wo)
+        distribution_wo = infer.query(list(goals.keys()), evidence=evidences_wo, show_progress=False)
 
         # global relevance
         jensen_shannon_value = compute_jensen_shannon_divergence(distribution_all.values,

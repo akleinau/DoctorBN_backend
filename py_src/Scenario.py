@@ -26,13 +26,13 @@ class Scenario:
 
         for t in self.patient.targets:
             node = self.patient.targets[t]
-            node.distribution = infer.query([node.name], evidence=self.patient.evidences)
+            node.distribution = infer.query([node.name], evidence=self.patient.evidences, show_progress=False)
 
     # computes the values for the goals
     def compute_goals(self):
         infer = inference.VariableElimination(self.network.model)
 
-        distribution = infer.query(list(self.patient.goals.keys()), evidence=self.patient.evidences)
+        distribution = infer.query(list(self.patient.goals.keys()), evidence=self.patient.evidences, show_progress=False)
         value = distribution.values
         goalValues = {}
         for i, goal in enumerate(distribution.variables):
@@ -80,7 +80,7 @@ class Scenario:
                 option[target['name']] = states[j]['states'][int(index / n[j])]
                 index = index % n[j]
 
-            distribution = infer.query(list(goalNames), evidence=simEvidence)
+            distribution = infer.query(list(goalNames), evidence=simEvidence, show_progress=False)
             value = distribution.values  # conditional probability table CPT
             goalValues = {}
             for i, goal in enumerate(distribution.variables):
@@ -120,12 +120,12 @@ class Scenario:
 
         for node in calcNodes:
             # calculate probabilities with evidence
-            distribution = infer.query([node], evidence=self.patient.evidences)
+            distribution = infer.query([node], evidence=self.patient.evidences, show_progress=False)
             stateProbabilities = distribution.values
             allStateNames = distribution.no_to_name[node]
 
             # calculate probabilities without evidence
-            distribution_wo_evidence = infer.query([node])
+            distribution_wo_evidence = infer.query([node], show_progress=False)
             stateProbabilities_wo_evidence = distribution_wo_evidence.values
 
             # calculate node attributes

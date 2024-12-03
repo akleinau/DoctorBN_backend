@@ -26,8 +26,8 @@ def find_changed_set(root, set, evidences, network, nodes):
             query_set.append(item)
 
 
-    withEvidence = infer.map_query(query_set, evidence=evidences)
-    standard = infer.map_query(query_set)
+    withEvidence = infer.map_query(query_set, evidence=evidences, show_progress=False)
+    standard = infer.map_query(query_set, show_progress=False)
 
     for item in query_set:
             if withEvidence[item] != standard[item]:
@@ -67,13 +67,13 @@ def find_smallest_set(root, set, evidences, network, nodes):
     while a.parent:
         a = a.parent
         ancestors.append(a)
-    ancestor_map = infer.map_query([x.name for x in ancestors], evidence=evidences)
+    ancestor_map = infer.map_query([x.name for x in ancestors], evidence=evidences, show_progress=False)
     map = {}
     for item in set:
         if item in evidences.keys():
             map[item] = evidences.get(item)
         else:
-            map.update(infer.map_query([item], evidence=evidences))
+            map.update(infer.map_query([item], evidence=evidences, show_progress=False))
 
     found = []
     length = 1
@@ -82,7 +82,7 @@ def find_smallest_set(root, set, evidences, network, nodes):
             e = {node: map.get(node) for node in nodes}
             same = True
             for x in ancestors:
-                result = infer.map_query([x.name], evidence=e)
+                result = infer.map_query([x.name], evidence=e, show_progress=False)
                 same = same and result[x.name] == ancestor_map[x.name]
             if same:
                 found.append(nodes)
