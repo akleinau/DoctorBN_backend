@@ -1,6 +1,7 @@
 Flask==3.1.0
 Flask-Cors==5.0.0
 Flask-SQLAlchemy==3.0.3
+Flask-Caching==1.10.1
 pandas==2.2.3
 pgmpy@git+https://github.com/akleinau/pgmpy@09d5283345834189f0a145a4addf3de5588a92a6
 SQLAlchemy==2.0.36

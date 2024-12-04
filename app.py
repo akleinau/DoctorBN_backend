@@ -11,6 +11,7 @@ from random import random
 from flask import Flask, request, jsonify, got_request_exception
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_caching import Cache
 
 import rollbar
 import rollbar.contrib.flask
@@ -27,6 +28,8 @@ app.config.from_pyfile('settings.py')
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
+
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 with app.app_context():
     """init rollbar module"""
@@ -48,6 +51,7 @@ def create_tables():
     db.create_all()
 
 @app.route('/getNetwork')
+@cache.cached(timeout=60, query_string=True)
 def getNetwork():
     data = request
     network = getNetworkInDatabase(data.args.get('network')) #else load from database
@@ -57,6 +61,7 @@ def getNetwork():
 
 
 @app.route('/getLocalNetwork', methods=['POST'])
+@cache.cached(timeout=60, query_string=True)
 def getLocalNetwork():
     network = request.get_json()
     s = Scenario(network["fileString"], network["fileFormat"])
@@ -170,11 +175,10 @@ def addNetwork(file, name, des):
 # Loads the list of known networks to the application
 # returns a python dict object
 @app.route('/loadNetList')
+@cache.cached(timeout=60)
 def getNetworkList():
-    networks = NetworkData.query.order_by(NetworkData.displayName).all()
-    netList = {}
-    for i, network in enumerate(networks):
-        netList[i] = network.displayName
+    networks = NetworkData.query.with_entities(NetworkData.displayName).order_by(NetworkData.displayName).all()
+    netList = {i: network.displayName for i, network in enumerate(networks)}
     return netList
 
 
@@ -184,11 +188,12 @@ def readFile(file):
     :param file: The .bif file to read
     :return: str containing its content
     """
-    string = file.readlines()
     string_decoded = ""
-    for index in string:
-        string_decoded += index.decode().replace('\r\n', '\n')
-    print(string_decoded)
+    while True:
+        chunk = file.read(1024)
+        if not chunk:
+            break
+        string_decoded += chunk.decode().replace('\r\n', '\n')
     return string_decoded
 
 
