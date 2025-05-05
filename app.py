@@ -23,9 +23,9 @@ ALLOWED_EXTENSIONS = ['.net']
 TEMPLATE_FOLDER = os.path.abspath('./src')
 app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
 app.config.from_pyfile('settings.py')
-# app.config['NETWORK_FOLDER'] = NETWORK_FOLDER
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#app.config['NETWORK_FOLDER'] = NETWORK_FOLDER
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
@@ -250,7 +250,9 @@ def sendFeedback():
     db.session.add(newFeedback)
     db.session.commit()
 
-    rollbar.report_message('Feedback received', 'info', request=request)
+    extra_data = {'included_configuration': data['csv'], 'mail_of_sender': data['mail']}
+
+    rollbar.report_message('Feedback received: ' + data['description'], 'info', request=request, extra_data=extra_data)
 
     return 'successful'
 
