@@ -285,6 +285,43 @@ def sendNetworkRequest():
 
     return 'successful'
 
+class EndoriskStudy(db.Model):
+    id = db.Column(db.String(), primary_key=True, nullable=False)
+    csv = db.Column(db.String(), nullable=True)
+
+@app.route('/generateEndoriskId', methods=["POST"])
+def generateEndoriskId():
+    """
+    Generates a unique and random ID for Endorisk
+    :return: unique ID as string
+    """
+
+    data = request.get_json()
+
+    id = get_new_id()  # generate a new ID
+    # ensure the id is unique in the "EndoriskStudy" table of the database
+    while EndoriskStudy.query.get(id) is not None:
+        id = get_new_id()
+    # save the new ID in the database
+    new_id = EndoriskStudy(id=id, csv=data['csv'])
+    db.session.add(new_id)
+    db.session.commit()
+
+    # return the unique ID
+    return id
+
+def get_new_id():
+    id = str(random())[2:]  # generate a random number and convert it to string, remove the "0."
+
+    # ensure the id is exactly 10 characters long
+    while len(id) < 10:
+        id += str(random())[2:]
+    if len(id) > 10:
+        id = id[:10]
+
+    return id
+
+
 @app.route('/')
 def home():
     return 'this is the flask backend'
